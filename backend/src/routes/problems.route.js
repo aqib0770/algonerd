@@ -18,9 +18,9 @@ problemRoutes.post(
   createProblem
 );
 
-problemRoutes.post('/get-all-problems', authMiddleware, getAllProblem);
+problemRoutes.get('/get-all-problems', authMiddleware, getAllProblem);
 
-problemRoutes.post('/get-problem/:id', authMiddleware, getProblemById);
+problemRoutes.get('/get-problem/:id', authMiddleware, getProblemById);
 
 problemRoutes.put(
   '/update-problem/:id',

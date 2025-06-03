@@ -21,7 +21,7 @@ export const submitBatch = async (submissions) => {
     );
     return data;
   } catch (error) {
-    console.error('Error in submitBatch');
+    console.error('Error in submitBatch', error);
   }
 };
 

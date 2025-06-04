@@ -3,8 +3,8 @@ import { db } from '../libs/db.js';
 export const createPlayList = async (req, res) => {
   try {
     const { name, description } = req.body;
-    const { userId } = req.user.userId;
-    const playlist = await db.playlist.create({
+    const userId = req.user.id;
+    const playlist = await db.playList.create({
       data: {
         name,
         description,
@@ -26,7 +26,7 @@ export const createPlayList = async (req, res) => {
 };
 export const getAllListDetails = async (req, res) => {
   try {
-    const playlists = await db.playlist.findMany({
+    const playlists = await db.playList.findMany({
       where: {
         userId: req.user.id,
       },
@@ -42,6 +42,7 @@ export const getAllListDetails = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: 'Playlist fetched',
+      playlists,
     });
   } catch (error) {
     console.error('Error fetching playlist', error);
@@ -55,7 +56,7 @@ export const getPlaylistDetails = async (req, res) => {
   const { playlistId } = req.params;
 
   try {
-    const playlist = await db.playlist.findUnique({
+    const playlist = await db.playList.findUnique({
       where: {
         id: playlistId,
         userId: req.user.id,
@@ -95,6 +96,17 @@ export const addProblemToPlaylist = async (req, res) => {
         error: 'Invalid or missing problems',
       });
     }
+    const problemExists = await db.problemsInPlaylist.findMany({
+      where: {
+        playlistId,
+        problemId: { in: problemIds },
+      },
+    });
+    if (problemExists) {
+      return res.status(401).json({
+        message: 'Problem already exists',
+      });
+    }
     const problemsInPlaylist = await db.problemsInPlaylist.createMany({
       data: problemIds.map((problemId) => ({
         playlistId,
@@ -115,17 +127,18 @@ export const addProblemToPlaylist = async (req, res) => {
   }
 };
 export const deletePlaylist = async (req, res) => {
-  const { playlist } = req.params;
+  const { playlistId } = req.params;
+  console.log(req.params);
   try {
-    const deleted = await db.playlist.delete({
+    const deleted = await db.playList.delete({
       where: {
-        id: playlist,
+        id: playlistId,
       },
     });
     return res.status(200).json({
       success: true,
       message: 'Playlist deleted successfully',
-      deletePlaylist,
+      deleted,
     });
   } catch (error) {
     console.error('Error in deleting playlist', error);

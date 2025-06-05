@@ -128,7 +128,6 @@ export const addProblemToPlaylist = async (req, res) => {
 };
 export const deletePlaylist = async (req, res) => {
   const { playlistId } = req.params;
-  console.log(req.params);
   try {
     const deleted = await db.playList.delete({
       where: {

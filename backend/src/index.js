@@ -1,6 +1,7 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
+import cors from 'cors';
 
 import authRoutes from './routes/auth.routes.js';
 import problemRoutes from './routes/problems.route.js';
@@ -13,7 +14,12 @@ dotenv.config();
 const port = process.env.PORT || 3000;
 
 const app = express();
-
+app.use(
+  cors({
+    origin: process.env.FRONTEND_ORIGIN,
+    credentials: true,
+  })
+);
 app.use(express.json());
 app.use(cookieParser());
 
